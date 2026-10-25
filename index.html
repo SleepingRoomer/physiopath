@@ -1,0 +1,263 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Physiopath</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400..700&family=Source+Sans+3:wght@400;500;600;700&display=swap">
+<style>
+/* Layout : site frère de Semiological, même typographie. Couleurs de la coloration hématoxyline-éosine (noyaux indigo, cytoplasme rose). Une fiche = une maladie, racontée comme une chaîne d'étapes, chaque étape sourcée ; les étapes qui expliquent un signe renvoient vers Semiological. */
+:root{
+  --bg:#fcfbfc; --ink:#221f33; --ink-2:#48445e; --muted:#6c6880; --hair:#ebe7ee;
+  --hema:#3b3a93; --hema-soft:#ecebf8; --eos:#c4467a; --eos-soft:#fbe8ef;
+  --f-display:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --f-body:"Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141320; --ink:#eceaf4; --ink-2:#c8c4d8; --muted:#a19cb3; --hair:#2a2838;
+  --hema:#a9a8f2; --hema-soft:#1f1f3a; --eos:#ef8fb5; --eos-soft:#2e1a25; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141320; --ink:#eceaf4; --ink-2:#c8c4d8; --muted:#a19cb3; --hair:#2a2838;
+  --hema:#a9a8f2; --hema-soft:#1f1f3a; --eos:#ef8fb5; --eos-soft:#2e1a25; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:18px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(20px, env(safe-area-inset-left, 0px));padding-right:max(20px, env(safe-area-inset-right, 0px))}
+a{color:var(--hema)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--hema);outline-offset:3px;border-radius:8px}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;text-wrap:balance;margin:0;letter-spacing:-.01em}
+
+.art{display:block;width:100%;height:auto}
+.art .l{fill:none;stroke:var(--ink-2);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.art .h{fill:none;stroke:var(--hema);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.art .e{fill:none;stroke:var(--eos);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
+.art .hf{fill:var(--hema);stroke:none}
+.art .ef{fill:var(--eos);stroke:none}
+.art .es{fill:var(--eos);opacity:.16;stroke:none}
+
+header.top{padding-block:60px 12px}
+.brand{font-size:clamp(2.5rem,7vw,3.7rem);line-height:1;letter-spacing:-.02em}
+.brand span{color:var(--eos)}
+.lede{color:var(--muted);margin:16px 0 0;max-width:46ch;font-size:1.1rem}
+.sister{display:inline-flex;align-items:center;gap:8px;margin-top:18px;font-size:.92rem;color:var(--muted)}
+.sister a{font-weight:600}
+
+/* Index */
+.list{display:grid;gap:0;padding-block:36px 72px}
+.row{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:24px;align-items:center;padding-block:22px;border-top:1px solid var(--hair);text-decoration:none;color:inherit}
+.row:last-child{border-bottom:1px solid var(--hair)}
+.row .pic{background:var(--eos-soft);border-radius:18px;padding:12px;transition:transform .25s}
+.row:hover .pic{transform:scale(1.04)}
+.row h2{font-size:1.4rem;line-height:1.2}
+.row p{margin:4px 0 0;color:var(--muted);font-size:1rem;line-height:1.45}
+.row .meta{color:var(--muted);font-size:.88rem;text-align:right;white-space:nowrap}
+.row .meta b{display:block;color:var(--hema);font-weight:600;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase}
+@media (max-width:620px){.row{grid-template-columns:72px minmax(0,1fr);gap:16px}.row .meta{display:none}}
+
+/* Fiche */
+.fiche{padding-block:40px 80px}
+.back{background:none;border:0;padding:0;color:var(--muted);cursor:pointer;font-weight:500}
+.back:hover{color:var(--ink)}
+.hero{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:44px;align-items:center;padding-block:28px 40px}
+@media (max-width:720px){.hero{grid-template-columns:minmax(0,1fr);gap:24px}.hero .pic{max-width:260px}}
+.hero .pic{background:var(--eos-soft);border-radius:28px;padding:13%}
+.kicker{font-size:.86rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--hema)}
+.hero h2{font-size:clamp(2rem,5vw,3rem);line-height:1.08;margin-top:8px}
+.bref{font-size:1.2rem;line-height:1.55;margin:16px 0 0;max-width:36ch}
+.fact{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-top:22px;padding-top:18px;border-top:1px solid var(--hair)}
+.fact .v{font-family:var(--f-display);font-weight:600;font-size:2.2rem;line-height:1;color:var(--eos);font-variant-numeric:tabular-nums}
+.fact .l{color:var(--muted);font-size:.95rem;line-height:1.4;max-width:34ch}
+
+.label{font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+
+/* Chaîne d'étapes */
+.chain{list-style:none;margin:0;padding:0;display:grid;max-width:700px}
+.step{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);gap:18px;padding-bottom:30px}
+.step::before{content:"";position:absolute;left:21px;top:44px;bottom:0;width:2px;background:var(--hema-soft)}
+.step:last-child::before{display:none}
+.step:last-child{padding-bottom:0}
+.node{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--hema-soft);color:var(--hema);font-family:var(--f-display);font-weight:600;font-size:1.1rem;font-variant-numeric:tabular-nums}
+.step h3{font-size:1.25rem;line-height:1.3;padding-top:8px}
+.step p{margin:6px 0 0;max-width:60ch}
+.ref{font-size:.72rem;font-weight:700;vertical-align:super;color:var(--muted);text-decoration:none;margin-left:2px}
+.sign{display:flex;gap:12px;align-items:flex-start;margin-top:14px;padding:14px 16px;border-radius:14px;background:var(--eos-soft)}
+.sign svg{flex:none;width:20px;height:20px;margin-top:2px;stroke:var(--eos);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sign b{color:var(--eos);font-weight:600}
+.sign p{margin:2px 0 0;font-size:.98rem}
+.sign a{font-weight:600;color:var(--eos)}
+
+.discuss{margin-top:48px;max-width:700px;padding:22px 24px;border-radius:18px;border:1px dashed var(--hair)}
+.discuss h3{font-family:var(--f-body);font-weight:700;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--hema);margin-bottom:8px}
+.discuss ul{margin:0;padding-left:1.1em;display:grid;gap:6px}
+
+details{margin-top:40px;max-width:700px;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding-block:16px;font-size:1.05rem;font-weight:600}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"";width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translate(-2px,-2px);transition:transform .2s}
+details[open] summary::after{transform:rotate(-135deg) translate(-2px,-2px)}
+.sources{margin:0 0 20px;padding-left:1.3em;display:grid;gap:10px;font-size:.95rem}
+.sources a{white-space:nowrap;font-weight:600}
+
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:64px;padding-top:24px;border-top:1px solid var(--hair)}
+.pager a{text-decoration:none;color:inherit;display:grid;gap:2px}
+.pager a:last-child{text-align:right}
+.pager small{color:var(--muted);font-size:.85rem}
+.pager span{font-family:var(--f-display);font-weight:600;font-size:1.1rem}
+
+footer{border-top:1px solid var(--hair);padding-block:28px 56px;color:var(--muted);font-size:.9rem}
+footer p{margin:0 0 6px;max-width:70ch}
+@media (prefers-reduced-motion:reduce){.row .pic,summary::after{transition:none}.row:hover .pic{transform:none}}
+</style>
+
+<main id="app"></main>
+<footer><div class="wrap">
+  <p>Chaque étape renvoie à ses sources : revues de référence, ouvrages médicaux tenus à jour et articles originaux. Les points encore discutés sont signalés à part.</p>
+  <p>Prototype en relecture, pour l'apprentissage. Ne remplace ni un cours ni un avis médical.</p>
+</div></footer>
+
+<script>
+const SEMIO="https://sleepingroomer.github.io/semiological/";
+const ICON_SIGN=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12C5 6.5 8.5 5 12 5s7 1.5 10 7c-3 5.5-6.5 7-10 7S5 17.5 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>`;
+
+const MALADIES=[
+{id:"pericardite-constrictive",nom:"Péricardite constrictive",spec:"Cardiologie",
+ bref:"Un péricarde devenu rigide empêche le cœur de se remplir.",
+ fait:{v:"< 0,5 %",l:"des péricardites virales évoluent vers une constriction"},
+ art:`<path class="l" d="M60 92C28 72 26 40 44 36C53 34 58 40 60 45C62 40 67 34 76 36C94 40 92 72 60 92Z"/><path class="e" d="M60 104C14 78 14 26 44 24C54 23 58 28 60 32C62 28 66 23 76 24C106 26 106 78 60 104Z" stroke-width="5"/><path class="h" d="M24 60H34M86 60H96M60 16V22"/>`,
+ etapes:[
+  {t:"Le péricarde cicatrise",p:"Après une péricardite virale, tuberculeuse, une chirurgie cardiaque, une radiothérapie ou sans cause retrouvée, le péricarde s'épaissit, se fibrose et parfois se calcifie. Toutes ces causes mènent au même résultat : une enveloppe qui ne se laisse plus distendre.",r:[1]},
+  {t:"Le cœur se remplit dans un volume fixe",p:"Le cœur et son enveloppe forment un bloc rigide. Le remplissage commence vite, puis s'arrête net quand le volume permis par le péricarde est atteint. Les pressions de remplissage s'élèvent et deviennent presque égales dans les quatre cavités.",r:[1,2]},
+  {t:"Le cœur ne perçoit plus la respiration",p:"À l'inspiration, la pression baisse dans le thorax mais cette baisse n'atteint plus les cavités cardiaques. Le retour veineux augmente, alors que l'oreillette droite ne peut pas l'accueillir.",r:[1,2],signe:{id:"kussmaul",nom:"Signe de Kussmaul",txt:"Le sang qui arrive à l'inspiration s'accumule dans les jugulaires, qui montent au lieu de s'affaisser."}},
+  {t:"Les deux ventricules se gênent",p:"À l'inspiration, le ventricule droit se remplit davantage et pousse le septum vers la gauche. Le ventricule gauche se remplit moins et éjecte moins de sang. C'est l'interdépendance ventriculaire, visible à l'échographie.",r:[1]},
+  {t:"Congestion et débit insuffisant",p:"Les pressions veineuses restent hautes : jugulaires turgescentes, œdèmes, ascite, parfois pris à tort pour une maladie du foie. Le débit cardiaque n'augmente pas à l'effort, d'où l'essoufflement. L'ablation chirurgicale du péricarde peut guérir.",r:[1]}],
+ discute:["Jusqu'à 18 % des constrictions confirmées en chirurgie ont un péricarde d'épaisseur normale à l'imagerie : un péricarde fin n'exclut pas le diagnostic."],
+ sources:[{t:"American College of Cardiology. Pathophysiology and diagnosis of constrictive pericarditis, 2017.",u:"https://www.acc.org/latest-in-cardiology/articles/2017/03/13/15/10/pathophysiology-and-diagnosis-of-constrictive-pericarditis"},{t:"UTMB Pediatric Education. Constrictive pericarditis.",u:"https://www.utmb.edu/pedi_ed/CoreV2/Cardiology/cardiologyV2/cardiologyV212.html"}]},
+
+{id:"insuffisance-aortique",nom:"Insuffisance aortique chronique",spec:"Cardiologie",
+ bref:"La valve aortique fuit : à chaque diastole, du sang revient dans le ventricule gauche.",
+ fait:{v:"> 30",l:"signes éponymes décrits pour cette seule maladie, rarement évalués"},
+ art:`<circle class="l" cx="60" cy="60" r="40"/><path class="h" d="M60 60L60 22M60 60L27 79M60 60L93 79"/><path class="l" d="M60 22C46 34 32 56 27 79M60 22C74 34 88 56 93 79M27 79C46 86 74 86 93 79"/><circle class="es" cx="60" cy="60" r="9"/><path class="e" d="M60 50V70M54 64L60 70L66 64"/>`,
+ etapes:[
+  {t:"La valve ne ferme plus",p:"Chez l'adulte, la cause principale est la dégénérescence de la valve et de la racine de l'aorte, sur valve bicuspide ou non. Viennent ensuite l'endocardite, le rhumatisme articulaire aigu, l'anévrisme de l'aorte thoracique et les traumatismes.",r:[1]},
+  {t:"Le sang reflue en diastole",p:"Pendant la diastole, une partie du sang éjecté revient de l'aorte vers le ventricule gauche.",r:[1]},
+  {t:"Le ventricule gauche se dilate",p:"Il reçoit à la fois le sang de l'oreillette et celui du reflux. Cette surcharge de volume le dilate et l'épaissit progressivement, ce qui lui permet d'éjecter un très grand volume à chaque battement.",r:[1]},
+  {t:"L'écart entre les pressions se creuse",p:"Le grand volume éjecté fait monter la pression systolique, puis le reflux la fait chuter vite en diastole. La pression différentielle s'élargit : le pouls devient ample et bref.",r:[1,2],signe:{id:"duroziez",nom:"Signe de Duroziez",txt:"Le flux part vers les jambes en systole puis revient en diastole : sous le stéthoscope, le souffle fémoral devient double."}},
+  {t:"Compensation, puis défaillance",p:"Pendant des années, le débit est préservé et le patient ne ressent rien. Puis la fonction du ventricule gauche baisse : arythmies, insuffisance cardiaque.",r:[1]}],
+ discute:["La plupart des signes périphériques (Quincke, de Musset, Müller…) n'ont jamais été évalués ; seuls Corrigan, Duroziez et Hill l'ont été, et aucun ne mesure bien la sévérité."],
+ sources:[{t:"Armstrong G.P. Aortic regurgitation. Merck Manual, édition professionnelle, mise à jour juin 2025.",u:"https://www.merckmanuals.com/professional/cardiovascular-disorders/valvular-disorders/aortic-regurgitation"},{t:"Aortic regurgitation eponymythology. Life in the Fast Lane (LITFL).",u:"https://litfl.com/aortic-regurgitation-eponymythology/"},{t:"Sapira J.D. Quincke, de Musset, Duroziez, and Hill: some aortic regurgitations. South Med J.",u:"https://sma.org/southern-medical-journal/article/quincke-de-musset-duroziez-and-hill-some-aortic-regurgitations/"}]},
+
+{id:"mastocytose",nom:"Mastocytose",spec:"Hématologie",
+ bref:"Des mastocytes trop nombreux s'accumulent dans la peau ou la moelle et libèrent leurs médiateurs.",
+ fait:{v:"> 80 %",l:"des mastocytoses systémiques portent la mutation KIT D816V"},
+ art:`<circle class="l" cx="58" cy="60" r="36"/><circle class="hf" cx="58" cy="60" r="11"/><g class="ef"><circle cx="38" cy="44" r="3.4"/><circle cx="74" cy="40" r="3"/><circle cx="80" cy="62" r="3.4"/><circle cx="70" cy="82" r="3"/><circle cx="42" cy="78" r="3.4"/><circle cx="34" cy="60" r="2.8"/><circle cx="56" cy="36" r="2.8"/><circle cx="102" cy="52" r="3"/><circle cx="108" cy="68" r="2.6"/><circle cx="100" cy="84" r="2.8"/></g>`,
+ etapes:[
+  {t:"Le récepteur KIT commande le mastocyte",p:"Les mastocytes portent en grande quantité le récepteur KIT (CD117). Son ligand, le stem cell factor, règle leur survie, leur maturation et leur multiplication.",r:[1]},
+  {t:"Une mutation l'allume en permanence",p:"Chez l'adulte, la mutation KIT D816V (une valine à la place d'un aspartate en position 816) active le récepteur sans ligand, surtout par la voie JAK/STAT5. Chez l'enfant, les mutations activatrices de KIT sont plus variées.",r:[1]},
+  {t:"Les mastocytes s'accumulent",p:"Le clone envahit la peau (mastocytose cutanée) ou la moelle osseuse et d'autres organes (mastocytose systémique). Les formes de l'enfant restent souvent limitées à la peau.",r:[1]},
+  {t:"Un frottement suffit à les vider",p:"Friction, chaleur, effort, stress, alcool ou certains médicaments (AINS, opioïdes) déclenchent la libération des granules et de leur histamine.",r:[1,2],signe:{id:"darier",nom:"Signe de Darier",txt:"Frotter une tache libère l'histamine sur place : la lésion gonfle, rougit et démange, la peau voisine reste normale."}},
+  {t:"Les médiateurs agissent à distance",p:"Bouffées de chaleur, démangeaisons, troubles digestifs, malaises par chute de tension et ostéoporose. Une anaphylaxie survient chez 20 à 49 % des patients.",r:[1]}],
+ discute:["Les mutations supplémentaires (TET2, SRSF2, ASXL1) pèsent sur la gravité des formes avancées ; leur rôle exact dans la progression reste étudié."],
+ sources:[{t:"Vaes M., Benghiat F.S., Hermine O. Targeted treatment options in mastocytosis. Front Med, 2017.",u:"https://www.frontiersin.org/journals/medicine/articles/10.3389/fmed.2017.00110/pdf"},{t:"Galen B.T., Rose M.G. Darier's sign in mastocytosis. Blood, 2014.",u:"https://pmc.ncbi.nlm.nih.gov/articles/PMC3931187"}]},
+
+{id:"lymphoedeme",nom:"Lymphœdème",spec:"Médecine vasculaire",
+ bref:"La lymphe ne s'évacue plus : le liquide stagne, puis la graisse et la fibrose s'installent.",
+ fait:{v:"24–49 %",l:"des patients traités pour un cancer développent un lymphœdème"},
+ art:`<path class="l" d="M14 50C40 46 52 54 62 52M14 70C40 74 52 66 62 68"/><path class="h" d="M28 50L34 58L28 70M44 50L50 58L44 70"/><circle class="es" cx="80" cy="60" r="18"/><circle class="e" cx="80" cy="60" r="18"/><path class="e" d="M72 52L88 68M88 52L72 68"/><g class="hf"><circle cx="24" cy="88" r="2.6"/><circle cx="38" cy="94" r="2.2"/><circle cx="52" cy="88" r="2.6"/><circle cx="32" cy="30" r="2.2"/><circle cx="48" cy="26" r="2.6"/></g>`,
+ etapes:[
+  {t:"Le drainage est interrompu",p:"Le lymphœdème est primaire quand les vaisseaux lymphatiques se sont mal formés (environ 1 personne sur 100 000), secondaire quand ils ont été détruits : curage ganglionnaire, radiothérapie, filariose, traumatisme (environ 1 sur 1 000).",r:[1]},
+  {t:"Un liquide riche stagne",p:"Les vaisseaux collecteurs se dilatent, perdent leurs contractions et fuient. Un liquide chargé de protéines et de lipides s'accumule entre les cellules.",r:[1]},
+  {t:"L'inflammation s'installe",p:"Des lymphocytes T CD4 envahissent le tissu. Leurs cytokines (IL-4, IL-13, TGF-β) entretiennent l'inflammation et poussent vers la fibrose.",r:[1]},
+  {t:"Graisse et fibrose épaississent la peau",p:"Les adipocytes grossissent et compriment les capillaires lymphatiques restants. Du collagène se dépose dans le derme : l'œdème devient dur et ne garde plus la marque du doigt.",r:[1,2],signe:{id:"stemmer",nom:"Signe de Stemmer",txt:"La peau épaissie et fibreuse du dos de l'orteil ne se laisse plus pincer."}},
+  {t:"La peau se fragilise",p:"Aux stades avancés, la peau devient dure, épaisse, fissurée. Les érysipèles et cellulites se répètent.",r:[1]}],
+ discute:["L'ordre entre inflammation, dépôt de graisse et fibrose n'est pas établi.","La stase seule ne suffit pas chez la souris à produire graisse et fibrose : d'autres déclencheurs interviennent.","Les données viennent surtout de modèles animaux aigus, alors que la maladie humaine évolue sur des années."],
+ sources:[{t:"Azhar S.H., Lim H.Y., Tan B.-K., Angeli V. The unresolved pathophysiology of lymphedema. Front Physiol, 2020.",u:"https://www.frontiersin.org/articles/10.3389/fphys.2020.00137/pdf"},{t:"Sensitivity and specificity of the Stemmer sign for lymphedema: a clinical lymphoscintigraphic study. Plast Reconstr Surg Glob Open, 2019.",u:"https://pmc.ncbi.nlm.nih.gov/articles/PMC6635205"}]},
+
+{id:"zona-ophtalmique",nom:"Zona ophtalmique",spec:"Infectiologie",
+ bref:"Le virus de la varicelle, endormi dans un ganglion nerveux, se réveille le long du nerf ophtalmique.",
+ fait:{v:"≈ 1/2",l:"des patients ont une atteinte du globe oculaire"},
+ art:`<circle class="hf" cx="22" cy="72" r="8"/><path class="h" d="M30 70C50 64 62 52 74 36M30 72C54 70 72 66 96 62M30 76C52 82 70 92 88 104"/><g class="ef"><circle cx="52" cy="60" r="3"/><circle cx="64" cy="49" r="2.6"/><circle cx="80" cy="64" r="3"/></g><path class="l" d="M88 56C94 50 104 50 110 56C104 62 94 62 88 56Z"/>`,
+ etapes:[
+  {t:"Le virus se cache dans un ganglion",p:"Après la varicelle, le virus varicelle-zona reste latent dans les ganglions sensitifs, dont celui du nerf trijumeau. Environ 90 % de la population a été exposée.",r:[1,2]},
+  {t:"L'immunité baisse, le virus se réveille",p:"L'immunité cellulaire, celle des lymphocytes T, le maintient endormi. Quand elle faiblit (après 60 ans, sous immunosuppresseurs, avec le VIH), le virus se multiplie dans le neurone.",r:[1,2]},
+  {t:"Il descend le long du nerf ophtalmique",p:"Les virus descendent l'axone jusqu'à la peau que ce nerf innerve : front, paupière supérieure, nez. L'inflammation du nerf explique la douleur, souvent présente avant l'éruption.",r:[1]},
+  {t:"Le nerf nasociliaire relie le nez et l'œil",p:"Cette branche du nerf ophtalmique innerve la peau du bout et de l'aile du nez, mais aussi le globe : cornée, iris, corps ciliaire. Des lésions sur le nez signalent que le virus a gagné cette branche.",r:[2,3],signe:{id:"hutchinson",nom:"Signe de Hutchinson",txt:"Une vésicule sur le bout du nez multiplie par environ trois le risque d'atteinte de l'œil."}},
+  {t:"L'œil s'enflamme",p:"La réponse immunitaire locale provoque kératite, uvéite, hausse de la pression intraoculaire et perte de sensibilité de la cornée. Les cicatrices peuvent réduire la vision durablement.",r:[1,2]}],
+ discute:["Les raisons exactes qui déclenchent la réactivation chez une personne donnée restent mal comprises."],
+ sources:[{t:"EyeWiki (American Academy of Ophthalmology). Herpes zoster ophthalmicus, relu le 28 septembre 2026.",u:"https://eyewiki.aao.org/Herpes_Zoster_Ophthalmicus"},{t:"Bunya V.Y. Herpes zoster ophthalmicus. Merck Manual, édition professionnelle, mise à jour juin 2026.",u:"https://merckmanuals.com/en-ca/professional/eye-disorders/corneal-disorders/herpes-zoster-ophthalmicus"},{t:"Zaal M.J.W., Völker-Dieben H.J., D'Amaro J. Prognostic value of Hutchinson's sign in acute herpes zoster ophthalmicus. Graefes Arch Clin Exp Ophthalmol, 2003.",u:"https://doi.org/10.1007/s00417-002-0609-1"}]},
+
+{id:"pneumomediastin",nom:"Pneumomédiastin spontané",spec:"Pneumologie",
+ bref:"Une alvéole se rompt et l'air remonte le long des bronches jusqu'au médiastin.",
+ fait:{v:"1944",l:"Macklin décrit le trajet de l'air, qui porte aujourd'hui son nom"},
+ art:`<g class="l"><circle cx="78" cy="78" r="9"/><circle cx="94" cy="70" r="8"/><circle cx="88" cy="92" r="8"/><circle cx="102" cy="86" r="7"/></g><circle class="es" cx="70" cy="94" r="9"/><path class="e" d="M64 88L58 84M76 100L80 106M62 100L56 104"/><path class="l" d="M74 70C60 56 44 44 30 22M80 74C66 60 50 48 38 26"/><path class="h" d="M66 74C54 62 44 52 36 40M32 40L36 34L42 38"/>`,
+ etapes:[
+  {t:"La pression monte dans les alvéoles",p:"Effort à glotte fermée, crise d'asthme, toux ou vomissements violents, inhalation de drogues, accouchement : la pression dans les alvéoles augmente brusquement.",r:[1]},
+  {t:"Une alvéole se rompt",p:"L'air s'échappe de l'alvéole et passe dans le tissu interstitiel du poumon.",r:[1]},
+  {t:"L'air suit les bronches et les vaisseaux",p:"Il remonte le long des gaines qui entourent bronches et vaisseaux, vers le hile puis le médiastin. C'est l'effet Macklin, visible au scanner comme des traînées d'air le long des bronches.",r:[1]},
+  {t:"Le médiastin se remplit d'air",p:"Le cœur bat alors contre des tissus infiltrés d'air. L'air peut aussi fuser vers le cou et sous la peau.",r:[1,2],signe:{id:"hamman",nom:"Signe de Hamman",txt:"À chaque battement, le cœur froisse les tissus gorgés d'air : on entend un craquement rythmé."}},
+  {t:"Le plus souvent, tout se résorbe",p:"Sans cause sous-jacente, c'est en général une affection bénigne : l'air se résorbe seul et le traitement vise les symptômes.",r:[2]}],
+ discute:["L'effet Macklin n'est pas toujours visible au scanner en périphérie du poumon, même quand il est présent près du hile."],
+ sources:[{t:"Murayama S., Gibo S. Spontaneous pneumomediastinum and Macklin effect: overview and appearance on computed tomography. World J Radiol, 2014.",u:"https://wjgnet.com/1949-8470/full/v6/i11/850.htm"},{t:"A crunch that spoke: an atypical presentation of spontaneous pneumomediastinum in an elderly male. Cureus.",u:"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13500057/"}]}
+];
+
+const app=document.getElementById("app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const art=(m)=>`<svg class="art" viewBox="0 0 120 120" role="img" aria-label="${esc(m.nom)}">${m.art}</svg>`;
+
+function index(){
+  app.innerHTML=`
+  <header class="top"><div class="wrap">
+    <h1 class="brand">Physiopath<span>.</span></h1>
+    <p class="lede">La physiopathologie des maladies, étape par étape, d'après des sources vérifiables.</p>
+    <div class="sister">Site frère de <a href="${SEMIO}" target="_blank" rel="noopener">Semiological ↗</a>, les signes cliniques rares.</div>
+  </div></header>
+  <div class="wrap"><section class="list">
+    ${MALADIES.map(m=>`<a class="row" href="#${m.id}">
+      <div class="pic">${art(m)}</div>
+      <div><h2>${esc(m.nom)}</h2><p>${esc(m.bref)}</p></div>
+      <div class="meta"><b>${esc(m.spec)}</b>${m.etapes.length} étapes · ${m.etapes.filter(e=>e.signe).length} signe</div>
+    </a>`).join("")}
+  </section></div>`;
+}
+
+function fiche(m){
+  const i=MALADIES.indexOf(m),prev=MALADIES[(i-1+MALADIES.length)%MALADIES.length],next=MALADIES[(i+1)%MALADIES.length];
+  const refs=r=>(r||[]).map(n=>`<a class="ref" href="#" data-src="${n}" aria-label="Source ${n}">[${n}]</a>`).join("");
+  app.innerHTML=`
+  <article class="wrap fiche">
+    <button class="back" id="back">← Toutes les maladies</button>
+    <div class="hero">
+      <div class="pic">${art(m)}</div>
+      <div>
+        <div class="kicker">${esc(m.spec)}</div>
+        <h2>${esc(m.nom)}</h2>
+        <p class="bref">${esc(m.bref)}</p>
+        <div class="fact"><span class="v">${esc(m.fait.v)}</span><span class="l">${esc(m.fait.l)}</span></div>
+      </div>
+    </div>
+    <div class="label">Étape par étape</div>
+    <ol class="chain">
+      ${m.etapes.map((e,k)=>`<li class="step"><div class="node">${k+1}</div><div>
+        <h3>${esc(e.t)}</h3><p>${esc(e.p)}${refs(e.r)}</p>
+        ${e.signe?`<div class="sign">${ICON_SIGN}<div><b>Ce que l'on voit à l'examen</b><p>${esc(e.signe.txt)} <a href="${SEMIO}#${e.signe.id}" target="_blank" rel="noopener">${esc(e.signe.nom)} sur Semiological ↗</a></p></div></div>`:""}
+      </div></li>`).join("")}
+    </ol>
+    ${m.discute.length?`<section class="discuss"><h3>À savoir et points discutés</h3><ul>${m.discute.map(d=>`<li>${esc(d)}</li>`).join("")}</ul></section>`:""}
+    <details id="src"><summary>Sources (${m.sources.length})</summary>
+      <ol class="sources">${m.sources.map((s,k)=>`<li id="s${k+1}">${esc(s.t)} <a href="${esc(s.u)}" target="_blank" rel="noopener">Lire ↗</a></li>`).join("")}</ol>
+    </details>
+    <nav class="pager" aria-label="Autres maladies">
+      <a href="#${prev.id}"><small>← Précédente</small><span>${esc(prev.nom)}</span></a>
+      <a href="#${next.id}"><small>Suivante →</small><span>${esc(next.nom)}</span></a>
+    </nav>
+  </article>`;
+  document.getElementById("back").addEventListener("click",()=>{history.replaceState(null,"",location.pathname);route()});
+  app.querySelectorAll(".ref").forEach(a=>a.addEventListener("click",ev=>{ev.preventDefault();const d=document.getElementById("src");d.open=true;document.getElementById("s"+a.dataset.src).scrollIntoView({behavior:"smooth",block:"center"})}));
+  window.scrollTo(0,0);
+}
+
+function route(){const m=MALADIES.find(x=>x.id===location.hash.slice(1));m?fiche(m):index()}
+window.addEventListener("hashchange",route);
+route();
+</script>
+
+</body></html>
